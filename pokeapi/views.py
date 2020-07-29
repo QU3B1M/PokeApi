@@ -6,9 +6,9 @@ from .serializers import PokemonSerializer, PokeTypeSerializer
 
 class PokemonViewSet(viewsets.ModelViewSet):
     queryset = Pokemon.objects.all()
-    serializer_class = PokemonSerializer()
+    serializer_class = PokemonSerializer
 
 
 class PokeTypesViewSet(viewsets.ModelViewSet):
     queryset = PokeType.objects.all()
-    serializer_class = PokeTypeSerializer()
+    serializer_class = PokeTypeSerializer
