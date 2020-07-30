@@ -22,6 +22,5 @@ class Pokemon(models.Model):
     class Meta:
         ordering = ['pokeid']
 
-    
     def __str__(self):
         return self.pokename
