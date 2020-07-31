@@ -9,41 +9,35 @@ class PokemonViewSet(viewsets.ModelViewSet):
     queryset = Pokemon.objects.all()
     serializer_class = PokemonSerializer
 
-    # def update(self, request, *args, **kwargs):
-    #     req_poketype = request.data['poketype']
-    #     if req_poketype not in PokeType.objects.all():
-    #         poketype = PokeType.objects.create(type=req_poketype)
-    #         serializer = PokeTypeSerializer(poketype)
-
-    #     pokemon = Pokemon.objects.get(pokeid=request.data['pokeid'])
-    #     pokemon.poketype = request.data['poketype']
-    #     pokemon.pokename = request.data['pokename']
-    #     pokemon.pokeid = request.data['pokeid']
-    #     pokemon.save()
-    #     serializer = PokemonSerializer(pokemon)
-
-    #     response = {
-    #         'message': 'Your pokemon were updated',
-    #         'result': serializer.data
-    #         }
-
-    #     return Response(response, status=status.HTTP_200_OK)
-
     def create(self, request, *args, **kwargs):
-        poketype = request.data["poketype"]
-
-        if poketype not in PokeType.objects.all():
-            ptype = PokeType(type=poketype)
+        re = request.data
+        if not PokeType.objects.filter(type=re["poketype"]).exists():
+            ptype = PokeType(type=re["poketype"])
             ptype.save()
-            pokemon = Pokemon.objects.create(
-                pokeid=request.data["pokeid"], pokename=request.data["pokename"]
-            )
-            pokemon.poketype.add(ptype)
 
+        pokemon = Pokemon.objects.create(pokeid=re["pokeid"], pokename=re["pokename"])
+        pokemon.poketype.add(PokeType.objects.get(type=re["poketype"]))
         serializer = PokemonSerializer(pokemon)
-        response = {"message": "Your pokemon were created", "result": serializer.data}
+        response = {"message": "Your pokemon was created", "result": serializer.data}
 
         return Response(response, status=status.HTTP_201_CREATED)
+
+    def update(self, request, *args, **kwargs):
+        self.destroy(self.get_object())
+        re = request.data
+
+        if not PokeType.objects.filter(type=request.data["poketype"]).exists():
+            ptype = PokeType(type=request.data["poketype"])
+            ptype.save()
+        else:
+            ptype = PokeType.objects.get(type=request.data["poketype"])
+
+        pokemon = Pokemon.objects.create(pokeid=re["pokeid"], pokename=re["pokename"])
+        pokemon.poketype.add(PokeType.objects.get(type=re["poketype"]))
+        serializer = PokemonSerializer(pokemon)
+        response = {"message": "Your pokemon was updated", "result": serializer.data}
+
+        return Response(response, status=status.HTTP_200_OK)
 
 
 class PokeTypesViewSet(viewsets.ModelViewSet):

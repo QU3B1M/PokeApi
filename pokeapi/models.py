@@ -13,7 +13,7 @@ class PokeType(models.Model):
 
 
 class Pokemon(models.Model):
-    pokename = models.CharField(max_length=50, unique=True)
+    pokename = models.CharField(max_length=50)
     poketype = models.ManyToManyField(PokeType)
     pokeid = models.IntegerField(
         validators=[MinValueValidator(0)],
