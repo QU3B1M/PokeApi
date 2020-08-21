@@ -3,7 +3,7 @@ from django.core.validators import MinValueValidator
 
 
 class PokeType(models.Model):
-    type = models.CharField(max_length=50)
+    type = models.CharField(max_length=50, unique=True)
 
     class Meta:
         ordering = ['type']
